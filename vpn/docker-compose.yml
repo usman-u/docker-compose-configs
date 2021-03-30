@@ -1,0 +1,47 @@
+version: "2"
+services:
+  qbittorrent:
+    image: binhex/arch-qbittorrentvpn
+    container_name: qbittorrent
+    privileged: true   
+    environment:
+      - PUID=0
+      - PGID=0
+      - UMASK=000
+      - VPN_ENABLED=yes
+      - VPN_PROV=
+      - VPN_USER=
+      - VPN_PASS=
+      - VPN_CLIENT=openvpn
+      - STRICT_PORT_FORWARD=yes
+      - ENABLE_PRIVOXY=no
+      - WEBUI_PORT=8089
+      - LAN_NETWORK=192.168.0.0/24
+      - NAME_SERVERS=8.8.8.8,192.168.0.100
+    ports:
+      - 8089:8089
+    volumes:
+      - ./qbit/config:/config
+      - /home/usman/NAS/usman_stuff/Media/Downloading:/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+
+  jackett:
+    image: dyonr/jackettvpn
+    container_name: jackett
+    privileged: true
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_USERNAME=
+      - VPN_PASSWORD=
+      - LAN_NETWORK=192.168.0.0/24
+      - NAME_SERVERS=8.8.8.8,1.1.1.1
+      - PUID=1000
+      - PGID=1000
+      - UMASK=000
+      - WEBUI=9117
+    ports:
+      - 9117:9117
+    volumes:
+      - ./jackett:/config
+    restart: unless-stopped

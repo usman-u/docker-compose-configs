@@ -1,0 +1,122 @@
+version: "2.1"
+
+services:
+
+  tautulli:
+    image: linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - ./tautulli:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:preview
+    container_name: sonarr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/London
+    volumes:
+      - ./sonarr:/config
+      - /home/usman/NAS/usman_stuff/Media/TV/:/tv
+      - /home/usman/NAS/usman_stuff/Media/Downloading/:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+ 
+  radarr:
+    image: ghcr.io/linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/London
+    volumes:
+      - ./radarr:/config
+      - /home/usman/NAS/usman_stuff/Media/:/movies
+      - /home/usman/NAS/usman_stuff/Media/Downloading/:/downloads
+    ports:
+      - 7877:7878
+    restart: unless-stopped
+
+  duckdns:
+    image: ghcr.io/linuxserver/duckdns
+    container_name: duckdns
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - SUBDOMAINS=w-g
+      - TOKEN=5b4bf991-64ee-4e45-b2a2-8f66d54cee21
+    restart: unless-stopped
+
+
+  unifi-controller:
+    image: ghcr.io/linuxserver/unifi-controller
+    container_name: unifi-controller
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./unifi/Unifi:/config
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8443:8443
+      - 1900:1900/udp
+      - 8843:8843 
+      - 8880:8880
+      - 6789:6789
+      - 5514:5514
+    restart: unless-stopped
+
+  heimdall:
+    image: ghcr.io/linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - ./heimdall:/config
+    ports:
+      - 81:80
+    restart: unless-stopped
+
+  organizr:
+    image: organizr/organizr
+    container_name: organizr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - branch=v2-master
+      - fpm=false
+    volumes:
+      - ./organizr:/config
+    ports:
+      - 185:80
+    restart: unless-stopped
+
+  smokeping:
+    image: ghcr.io/linuxserver/smokeping
+    container_name: smokeping
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - ./smokeping/config:/config
+      - ./smokeping/data:/data
+    ports:
+      - 698:80
+    restart: unless-stopped
+
