@@ -6,13 +6,33 @@ services:
     image: linuxserver/tautulli:latest
     container_name: tautulli
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=1001
+      - PGID=1001
       - TZ=Europe/London
     volumes:
       - ./tautulli:/config
     ports:
       - 8181:8181
+    restart: unless-stopped
+
+  unifi-controller:
+    image: ghcr.io/linuxserver/unifi-controller
+    container_name: unifi-controller
+    environment:
+      - PUID=1001
+      - PGID=1001
+    volumes:
+      - ./unifi/Unifi:/config
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8443:8443
+      - 1900:1900/udp
+      - 8843:8843
+      - 8880:8880
+      - 6789:6789
+      - 5514:5514
     restart: unless-stopped
 
   sonarr:
@@ -30,10 +50,10 @@ services:
       - 8989:8989
     restart: unless-stopped
 
- 
-  radarr:
+
+  radarr1:
     image: ghcr.io/linuxserver/radarr
-    container_name: radarr
+    container_name: radarr1
     environment:
       - PUID=0
       - PGID=0
@@ -41,73 +61,47 @@ services:
     volumes:
       - ./radarr:/config
       - /home/usman/NAS/usman_stuff/Media/:/movies
-      - /home/usman/NAS/usman_stuff/Media/Downloading/:/downloads
+      - /home/usman/NAS/usman_stuff/Media/Downloading/:/data
     ports:
       - 7877:7878
     restart: unless-stopped
 
-  duckdns:
-    image: ghcr.io/linuxserver/duckdns
-    container_name: duckdns
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/London
-      - SUBDOMAINS=w-g
-      - TOKEN=5b4bf991-64ee-4e45-b2a2-8f66d54cee21
-    restart: unless-stopped
 
-
-  unifi-controller:
-    image: ghcr.io/linuxserver/unifi-controller
-    container_name: unifi-controller
+  radarr4k:
+    image: ghcr.io/linuxserver/radarr
+    container_name: radarr4k
     environment:
-      - PUID=1000
-      - PGID=1000
-    volumes:
-      - ./unifi/Unifi:/config
-    ports:
-      - 3478:3478/udp
-      - 10001:10001/udp
-      - 8080:8080
-      - 8443:8443
-      - 1900:1900/udp
-      - 8843:8843 
-      - 8880:8880
-      - 6789:6789
-      - 5514:5514
-    restart: unless-stopped
-
-  heimdall:
-    image: ghcr.io/linuxserver/heimdall
-    container_name: heimdall
-    environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=0
+      - PGID=0
       - TZ=Europe/London
     volumes:
-      - ./heimdall:/config
+      - ./radarr4k:/config
+      - /home/usman/NAS/usman_stuff/Media/:/movies
+      - /home/usman/NAS/usman_stuff/Media/Downloading/:/data
     ports:
-      - 81:80
+      - 7876:7878
     restart: unless-stopped
 
-  organizr:
-    image: organizr/organizr
-    container_name: organizr
+  syncthing:
+    image: lscr.io/linuxserver/syncthing
+    container_name: syncthing
+    hostname: syncthing
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=1001
+      - PGID=1001
       - TZ=Europe/London
-      - branch=v2-master
-      - fpm=false
     volumes:
-      - ./organizr:/config
+      - ./syncthing:/config
+      - /home/usman/NAS/BACKUPS/syncthing:/data1
     ports:
-      - 185:80
+      - 8384:8384
+      - 22000:22000/tcp
+      - 22000:22000/udp
+      - 21027:21027/udp
     restart: unless-stopped
 
   smokeping:
-    image: ghcr.io/linuxserver/smokeping
+    image: lscr.io/linuxserver/smokeping
     container_name: smokeping
     environment:
       - PUID=1000
@@ -117,6 +111,18 @@ services:
       - ./smokeping/config:/config
       - ./smokeping/data:/data
     ports:
-      - 698:80
+      - 89:80
     restart: unless-stopped
 
+  heimdall:
+    image: lscr.io/linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - ./heimdall:/config
+    ports:
+      - 69:80
+    restart: unless-stopped
