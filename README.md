@@ -7,6 +7,7 @@ Docker-Compose configuration files for my Raspberry Pi Docker Host:
 * SyncThing
 * Smoke Ping
 * Heimdall
+* Uptime-Kuma
 
 Also:
 * Qbittorrent routed through WireGuard PIA. 

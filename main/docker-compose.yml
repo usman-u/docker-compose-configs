@@ -126,3 +126,11 @@ services:
     ports:
       - 69:80
     restart: unless-stopped
+
+  uptime-kuma:
+    image: louislam/uptime-kuma
+    container_name: uptime-kuma
+    volumes:
+      - ./uptime-kuma:/app/data
+    ports:
+      - 3001:3001
